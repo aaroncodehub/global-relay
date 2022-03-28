@@ -1,9 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
 
 const initialState = {
-  loading: true,
-  tweets: null,
-  savedTweets: null,
+  tweets: [],
+  savedTweets: [],
 };
 
 export const tweetSlice = createSlice({
@@ -19,11 +19,27 @@ export const tweetSlice = createSlice({
     setTweets: (state, action) => {
       state.tweets = action.payload;
     },
+    setSavedTweets: (state, action) => {
+      state.savedTweets = action.payload;
+    },
   },
 });
 
-export const { setTweets } = tweetSlice.actions;
+export const { setTweets, setSavedTweets } = tweetSlice.actions;
 
-export const selectCount = (state) => state.tweet.tweets;
+export const selectTweet = (state) => state.tweet.tweets;
+export const selectSavedTweet = (state) => state.tweet.savedTweets;
+
+export const searchTweet = (query) => async (dispatch) => {
+  if(query) {
+    const url = `http://localhost:8000/${query}`;
+  try {
+    const response = await axios.get(url);
+    dispatch(setTweets(response.data));
+  } catch (err) {
+    console.log(err);
+  }
+  }
+};
 
 export default tweetSlice.reducer;
